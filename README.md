@@ -9,9 +9,11 @@ arctool
 **Before using with arcade, you must replace the default key on lines 68 and 222 with the proper value**
 
 **Requirements**
-pycryptodomex (install with `pip install pycrptodomex`)
+
+pycryptodomex (install with `pip install pycryptodomex`)
 
 **Usage**
+
 Unpack an archive
 
 	import arctool
@@ -28,6 +30,7 @@ This will also generate a .unknowns.txt and .order.txt file for repacking.
 For a folder to be repacked accurately, a .unknowns.txt and .order.txt file must be present.
 
 Constructor parameters
+
 	keyFolderPath
 		Optional path to a folder containing text files with the .key extension with respective archive keys. If not present, uses default key.
 	encrypt
@@ -38,6 +41,8 @@ Constructor parameters
 		*ARCDecrypter* Allows files that can't be decrypted properly.
 
 The fileDetail method can be used to get information about the archive.
+
+The .unknowns.txt contains type information for the file, which is the first number after the filename.
 
 xfstool
 -------
