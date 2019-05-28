@@ -24,8 +24,8 @@ This will also generate a .unknowns.txt and .order.txt file for repacking.
 (Re)pack a folder
 
 	import arctool
-	obj = arctool.ARCEncrypter('archive.arc')
-	obj.unpack()
+	obj = arctool.ARCEncrypter('archive')
+	obj.pack()
 
 For a folder to be repacked accurately, a .unknowns.txt and .order.txt file must be present.
 
