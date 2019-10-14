@@ -310,3 +310,15 @@ class ARCEncrypter(object):
 				handle.write(Tools.byteListToBinary(byteList))
 		handle.close()
 		return string
+
+if __name__ == '__main__':
+	import sys
+	if len(sys.argv)<3:
+		sys.stderr.write('arctool.py d archive.arc / arctool.py e archive\n')
+		sys.exit(1)
+	if sys.argv[1]=='d':
+		obj = ARCDecrypter(sys.argv[2])
+		obj.unpack()
+	elif sys.argv[1]=='e':
+		obj = ARCEncrypter(sys.argv[2])
+		obj.pack()
