@@ -30,7 +30,6 @@ class ARCDecrypter(object):
 	import shutil
 	import zlib
 	import os
-	import Tools
 	import base64
 	from Cryptodome.Cipher import Blowfish
 
@@ -93,12 +92,14 @@ class ARCDecrypter(object):
 
 	def bf_decode(self, byteList):
 		decrypted = []
+		bList = []
 		for i in range(len(byteList) // 8):
-			bList = [byteList[i * 8 + 3], byteList[i * 8 + 2], byteList[i * 8 + 1], byteList[i * 8 + 0], byteList[i * 8 + 7], byteList[i * 8 + 6], byteList[i * 8 + 5], byteList[i * 8 + 4]]
-			string = Tools.byteListToBinary(bList)
-			bfDecrypter = self.Blowfish.new(self.key.encode('utf-8'), self.Blowfish.MODE_ECB)
-			decryptedByteList = Tools.binaryToByteList(bfDecrypter.decrypt(string))
-			decrypted.extend([decryptedByteList[3], decryptedByteList[2], decryptedByteList[1], decryptedByteList[0], decryptedByteList[7], decryptedByteList[6], decryptedByteList[5], decryptedByteList[4]])
+			bList.extend([byteList[i * 8 + 3], byteList[i * 8 + 2], byteList[i * 8 + 1], byteList[i * 8 + 0], byteList[i * 8 + 7], byteList[i * 8 + 6], byteList[i * 8 + 5], byteList[i * 8 + 4]])
+		string = Tools.byteListToBinary(bList)
+		bfDecrypter = self.Blowfish.new(self.key.encode('utf-8'), self.Blowfish.MODE_ECB)
+		decryptedByteList = Tools.binaryToByteList(bfDecrypter.decrypt(string))
+		for i in range(len(byteList) // 8):
+			decrypted.extend([decryptedByteList[i * 8 + 3], decryptedByteList[i * 8 + 2], decryptedByteList[i * 8 + 1], decryptedByteList[i * 8 + 0], decryptedByteList[i * 8 + 7], decryptedByteList[i * 8 + 6], decryptedByteList[i * 8 + 5], decryptedByteList[i * 8 + 4]])
 		return decrypted
 
 	def fileDetail(self):
@@ -134,9 +135,7 @@ class ARCDecrypter(object):
 			basePath = self.os.path.join(self.filePath,'/'.join(file['name'].split("/")[:-1]))
 			if not self.os.path.exists(basePath):
 				self.os.makedirs(basePath)
-			fileByteList = []
-			for j in range(file['size']):
-				fileByteList.append(self.fileByteList[file['offset'] + j])
+			fileByteList = self.fileByteList[file['offset'] : file['offset']+file['size']]
 			if self.isArcc:
 				fileByteList = self.bf_decode(fileByteList)
 			if self.os.path.exists(savePath):
@@ -162,7 +161,6 @@ class ARCEncrypter(object):
 	import shutil
 	import zlib
 	import os
-	import Tools
 	import glob
 	from Cryptodome.Cipher import Blowfish
 
@@ -244,12 +242,14 @@ class ARCEncrypter(object):
 
 	def bf_encode(self, byteList):
 		encrypted = []
+		bList = []
 		for i in range(len(byteList) // 8):
-			bList = [byteList[i * 8 + 3], byteList[i * 8 + 2], byteList[i * 8 + 1], byteList[i * 8 + 0], byteList[i * 8 + 7], byteList[i * 8 + 6], byteList[i * 8 + 5], byteList[i * 8 + 4]]
-			string = Tools.byteListToBinary(bList)
-			bfEncrypter = self.Blowfish.new(self.key.encode('utf-8'), self.Blowfish.MODE_ECB)
-			encryptedByteList = Tools.binaryToByteList(bfEncrypter.encrypt(string))
-			encrypted.extend([encryptedByteList[3], encryptedByteList[2], encryptedByteList[1], encryptedByteList[0], encryptedByteList[7], encryptedByteList[6], encryptedByteList[5], encryptedByteList[4]])
+			bList.extend([byteList[i * 8 + 3], byteList[i * 8 + 2], byteList[i * 8 + 1], byteList[i * 8 + 0], byteList[i * 8 + 7], byteList[i * 8 + 6], byteList[i * 8 + 5], byteList[i * 8 + 4]])
+		string = Tools.byteListToBinary(bList)
+		bfEncrypter = self.Blowfish.new(self.key.encode('utf-8'), self.Blowfish.MODE_ECB)
+		encryptedByteList = Tools.binaryToByteList(bfEncrypter.encrypt(string))
+		for i in range(len(byteList) // 8):
+			encrypted.extend([encryptedByteList[i * 8 + 3], encryptedByteList[i * 8 + 2], encryptedByteList[i * 8 + 1], encryptedByteList[i * 8 + 0], encryptedByteList[i * 8 + 7], encryptedByteList[i * 8 + 6], encryptedByteList[i * 8 + 5], encryptedByteList[i * 8 + 4]])
 		return encrypted
 
 	def fileDetail(self):
@@ -312,3 +312,15 @@ class ARCEncrypter(object):
 				handle.write(Tools.byteListToBinary(byteList))
 		handle.close()
 		return string
+
+if __name__ == '__main__':
+	import sys
+	if len(sys.argv)<3:
+		sys.stderr.write('arctool.py d archive.arc / arctool.py e archive\n')
+		sys.exit(1)
+	if sys.argv[1]=='d':
+		obj = ARCDecrypter(sys.argv[2])
+		obj.unpack()
+	elif sys.argv[1]=='e':
+		obj = ARCEncrypter(sys.argv[2])
+		obj.pack()
