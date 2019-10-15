@@ -30,7 +30,6 @@ class ARCDecrypter(object):
 	import shutil
 	import zlib
 	import os
-	import Tools
 	import base64
 	from Cryptodome.Cipher import Blowfish
 
@@ -162,7 +161,6 @@ class ARCEncrypter(object):
 	import shutil
 	import zlib
 	import os
-	import Tools
 	import glob
 	from Cryptodome.Cipher import Blowfish
 
