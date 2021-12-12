@@ -51,16 +51,16 @@ xfstool
 Convert an XFS file to XML
 
 	import xfstool
-	obj = xfstool.XFSToXML('input', 'output.xml')
+	obj = xfstool.XFSToXML('input')
 	obj.readHeader()
-	obj.parseData()
+	obj.parseData()  # Will be output to "input.xml"
 
 Convert an XML file outputted by the tool back to XFS
 
 	import xfstool
-	obj = xfstool.XMLToXFS('input.xml', 'output')
+	obj = xfstool.XMLToXFS('input.xml')
 	obj.readHeader()
-	obj.parseData()
+	obj.parseData()  # Will be output to "input"
 
 Convert an AC format XFS to iOS'
 
